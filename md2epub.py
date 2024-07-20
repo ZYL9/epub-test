@@ -60,6 +60,8 @@ def combine_markdown_files(root_dir):
 
             files = sorted(files, key=natural_keys)
 
+            print(files)
+
             level_offset = current_path[len(root_dir) :].count(os.sep)
 
             # Process index.md first if it exists in the directory
