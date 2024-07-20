@@ -38,25 +38,32 @@ def adjust_heading_levels(content, level_offset):
     return "\n".join(adjusted_lines)
 
 
+## natsort
+def atoi(text):
+    return int(text) if text.isdigit() else text
+
+
+def natural_keys(text):
+    """
+    alist.sort(key=natural_keys) sorts in human order
+    http://nedbatchelder.com/blog/200712/human_sorting.html
+    (See Toothy's implementation in the comments)
+    """
+    return [atoi(c) for c in re.split(r"(\d+)", text)]
+
+
 def combine_markdown_files(root_dir):
     combined_content = []
 
     for current_path, dirs, files in os.walk(root_dir):
+        dirs = sorted(dirs, key=natural_keys)
         normalized_path = os.path.normpath(current_path)
-        if ".vitepress" not in normalized_path.split(
-            os.sep
-        ) and "public" not in normalized_path.split(os.sep):
+        if (
+            ".vitepress" not in normalized_path.split(os.sep)
+            and "public" not in normalized_path.split(os.sep)
+            and "assets" not in normalized_path.split(os.sep)
+        ):
             # Sort files to ensure index.md is processed first if present
-            def atoi(text):
-                return int(text) if text.isdigit() else text
-
-            def natural_keys(text):
-                """
-                alist.sort(key=natural_keys) sorts in human order
-                http://nedbatchelder.com/blog/200712/human_sorting.html
-                (See Toothy's implementation in the comments)
-                """
-                return [atoi(c) for c in re.split(r"(\d+)", text)]
 
             files = sorted(files, key=natural_keys)
 
